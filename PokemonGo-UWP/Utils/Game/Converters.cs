@@ -9,7 +9,6 @@ using Windows.UI.Xaml.Controls.Maps;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using GeoExtensions;
 using Google.Common.Geometry;
 using Google.Protobuf.Collections;
 using PokemonGo.RocketAPI.Extensions;
@@ -68,8 +67,9 @@ namespace PokemonGo_UWP.Utils
         {
             if (value == null) return new BasicGeoposition();
             var pokemonData = (PokemonData) value;
-            var cellId = new S2CellId(pokemonData.CapturedCellId).ToLatLng();            
-            return new Geopoint(new BasicGeoposition() {Latitude = cellId.LatDegrees, Longitude = cellId.LngDegrees});
+            // TODO: still give wrong position!
+            var cellCenter = new S2CellId(pokemonData.CapturedCellId).ChildEndForLevel(30).ToLatLng();// new S2LatLng(new S2Cell(new S2CellId(pokemonData.CapturedCellId).RangeMax).Center);
+            return new Geopoint(new BasicGeoposition() {Latitude = cellCenter.LatDegrees, Longitude = cellCenter.LngDegrees});
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -255,11 +255,9 @@ namespace PokemonGo_UWP.Utils
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             var teamColor = (TeamColor) value;
-            var currentTime = int.Parse(DateTime.Now.ToString("HH"));
-            var noTeamColor = currentTime > 7 && currentTime < 19 ? Colors.Black : Colors.White;
             return new SolidColorBrush(teamColor == TeamColor.Neutral
-                ? noTeamColor
-                : teamColor == TeamColor.Blue ? Colors.Blue : teamColor == TeamColor.Red ? Colors.Red : Colors.Yellow);
+                ? Color.FromArgb(255, 26, 237, 213)
+                : teamColor == TeamColor.Blue ? Color.FromArgb(255, 36, 176, 253) : teamColor == TeamColor.Red ? Color.FromArgb(255, 237, 90, 90) : Color.FromArgb(255, 254, 225, 63));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

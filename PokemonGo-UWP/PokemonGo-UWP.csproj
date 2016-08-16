@@ -189,6 +189,7 @@
     <Content Include="Assets\Icons\pokestop_far_inactive.png" />
     <Content Include="Assets\Icons\pokestop_near.png" />
     <Content Include="Assets\Icons\pokestop_near_inactive.png" />
+    <Content Include="Assets\Icons\RecenterMapIcon.png" />
     <Content Include="Assets\Icons\stardust_painted.png" />
     <Content Include="Assets\Icons\stardust_vector.png" />
     <Content Include="Assets\Items\Egg.png" />
@@ -220,7 +221,6 @@
     <Content Include="Assets\Items\Item_COIN_HEAP_01.png" />
     <Content Include="Assets\Items\Item_COIN_POUCH_01.png" />
     <Content Include="Assets\Items\Item_COIN_STACK_01.png" />
-    <Content Include="Assets\LiveTiles\Normal\640x640.png" />
     <Content Include="Assets\LiveTiles\Normal\NewStoreLogo.scale-100.png" />
     <Content Include="Assets\LiveTiles\Normal\NewStoreLogo.scale-125.png" />
     <Content Include="Assets\LiveTiles\Normal\NewStoreLogo.scale-150.png" />
@@ -588,6 +588,7 @@
     <Compile Include="Utils\Helpers\AudioUtils.cs" />
     <Compile Include="Utils\Extensions\CollectionExtensions.cs" />
     <Compile Include="Utils\Game\Converters.cs" />
+    <Compile Include="Utils\Helpers\GeoHelper.cs" />
     <Compile Include="Utils\Helpers\IStorageHelper.cs" />
     <Compile Include="Utils\Helpers\LiveTileHelper.cs" />
     <Compile Include="Utils\Helpers\LiveTileModes.cs" />
