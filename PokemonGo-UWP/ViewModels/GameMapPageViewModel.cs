@@ -18,11 +18,42 @@ using POGOProtos.Networking.Responses;
 using Template10.Common;
 using Template10.Mvvm;
 using Resources = PokemonGo_UWP.Utils.Resources;
+using POGOProtos.Enums;
+using POGOProtos.Map.Pokemon;
 
 namespace PokemonGo_UWP.ViewModels
 {
     public class GameMapPageViewModel : ViewModelBase
     {
+
+        public GameMapPageViewModel()
+        {
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            {
+                var poke1 = new NearbyPokemon()
+                {
+                    PokemonId = PokemonId.Abra,
+                    DistanceInMeters = 10,
+                };
+                var poke2 = new NearbyPokemon()
+                {
+                    PokemonId = PokemonId.Arbok,
+                    DistanceInMeters = 11,
+                };
+                var poke3 = new NearbyPokemon()
+                {
+                    PokemonId = PokemonId.Blastoise,
+                    DistanceInMeters = 12,
+                };
+                GameClient.NearbyPokemons.Add(new NearbyPokemonWrapper(poke1));
+                GameClient.NearbyPokemons.Add(new NearbyPokemonWrapper(poke2));
+                GameClient.NearbyPokemons.Add(new NearbyPokemonWrapper(poke3));
+                GameClient.PokedexInventory.Add(new PokedexEntry { PokemonId = poke1.PokemonId, TimesCaptured = 1 });
+                GameClient.PokedexInventory.Add(new PokedexEntry { PokemonId = poke2.PokemonId, TimesCaptured = 1 });
+            }
+        }
+
+
         #region Lifecycle Handlers
 
         /// <summary>
@@ -215,6 +246,11 @@ namespace PokemonGo_UWP.ViewModels
         }
 
         /// <summary>
+        /// HACK - Needed to fix #655 (PlayerStats binding converter is not called on update)
+        /// </summary>
+        public object DummyProperty { get; set; }
+
+        /// <summary>
         ///     Updates player profile & stats
         /// </summary>
         /// <param name="checkForLevelUp"></param>
@@ -225,6 +261,7 @@ namespace PokemonGo_UWP.ViewModels
             LevelUpResponse = await GameClient.UpdatePlayerStats(checkForLevelUp);
             PlayerProfile = GameClient.PlayerProfile;
             PlayerStats = GameClient.PlayerStats;
+            RaisePropertyChanged(() => DummyProperty);
             if (checkForLevelUp && LevelUpResponse != null)
             {
                 switch (LevelUpResponse.Result)
