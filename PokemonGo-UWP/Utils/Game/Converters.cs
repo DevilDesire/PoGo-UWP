@@ -63,6 +63,29 @@ namespace PokemonGo_UWP.Utils
         #endregion
     }
 
+    public class PokemonTypeTranslationConverter : IValueConverter
+    {
+        #region Implementation of IValueConverter
+
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if(value == null || !(value is Enum))
+            {
+                return string.Empty;
+            }
+
+            var type = (PokemonType)value;
+            return Resources.PokemonTypes.GetString(type.ToString());
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return value;
+        }
+
+        #endregion
+    }
+
     public class PokemonDataToCapturedGepositionConverter : IValueConverter
     {
         #region Implementation of IValueConverter
@@ -149,7 +172,7 @@ namespace PokemonGo_UWP.Utils
         {
             if (value == null) return string.Empty;
             var move = (PokemonMove)value;
-            return GameClient.MoveSettings.First(item => item.MovementId == move).PokemonType;
+            return new PokemonTypeTranslationConverter().Convert(GameClient.MoveSettings.First(item => item.MovementId == move).PokemonType, targetType, parameter, language);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -368,13 +391,13 @@ namespace PokemonGo_UWP.Utils
             {
                 return new BitmapImage(new Uri("ms-appx:///Assets/Achievements/badge_lv0.png"));
             }
-            if (float.Parse(achievement.Value.ToString()) < float.Parse(silver.Value.ToString()))
-            {
-                level = 1;
-            }
             if (float.Parse(achievement.Value.ToString()) < float.Parse(gold.Value.ToString()))
             {
                 level = 2;
+            }
+            if (float.Parse(achievement.Value.ToString()) < float.Parse(silver.Value.ToString()))
+            {
+                level = 1;
             }
             
             switch (achievement.Key.ToString().ToLower().Replace(" ","")) {
@@ -390,10 +413,8 @@ namespace PokemonGo_UWP.Utils
                 case "scientist":
                 case "youngster":
                     return new BitmapImage(new Uri("ms-appx:///Assets/Achievements/" + achievement.Key.ToString().ToLower().Replace(" ", "") + "_lv" + level.ToString() + ".png"));
-                    break;
                 default:
                     return new BitmapImage(new Uri("ms-appx:///Assets/Achievements/badge_lv" + level.ToString() + ".png"));
-                    break;
             }
         }
 
@@ -905,13 +926,21 @@ namespace PokemonGo_UWP.Utils
             switch (fortDataStatus)
             {
                 case FortDataStatus.Opened:
-                    return new Uri($"ms-appx:///Assets/Icons/pokestop_near.png");
+                    return new Uri(resourceUriString + "near.png");
                 case FortDataStatus.Closed:
-                    return new Uri("ms-appx:///Assets/Icons/pokestop_far.png");
+                    return new Uri(resourceUriString + "far.png");
                 case FortDataStatus.Opened | FortDataStatus.Cooldown:
-                    return new Uri($"ms-appx:///Assets/Icons/pokestop_near_inactive.png");
+                    return new Uri(resourceUriString + "near_inactive.png");
                 case FortDataStatus.Closed | FortDataStatus.Cooldown:
-                    return new Uri($"ms-appx:///Assets/Icons/pokestop_far_inactive.png");
+                    return new Uri(resourceUriString + "far_inactive.png");
+                case FortDataStatus.Opened | FortDataStatus.Lure:
+                    return new Uri(resourceUriString + "near_lured.png");
+                case FortDataStatus.Closed | FortDataStatus.Lure:
+                    return new Uri(resourceUriString + "far_lured.png");
+                case FortDataStatus.Opened | FortDataStatus.Cooldown | FortDataStatus.Lure:
+                    return new Uri(resourceUriString + "near_inactive_lured.png");
+                case FortDataStatus.Closed | FortDataStatus.Cooldown | FortDataStatus.Lure:
+                    return new Uri(resourceUriString + "far_inactive_lured.png");
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -950,7 +979,7 @@ namespace PokemonGo_UWP.Utils
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value == null) return 0;
-            var pokemon = (PokemonDataWrapper)value;            
+            var pokemon = (PokemonDataWrapper)value;
             return System.Convert.ToDouble(pokemon.Stamina / pokemon.StaminaMax * 100);
         }
 
@@ -977,7 +1006,7 @@ namespace PokemonGo_UWP.Utils
                     ? "ms-appx:///Assets/Items/Egg.png"
                     : $"ms-appx:///Assets/Items/E_Item_{(int) GameClient.GetIncubatorFromEgg(egg.WrappedData).ItemId}.png";
             }
-            return new BitmapImage(new Uri(uri));            
+            return new BitmapImage(new Uri(uri));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -1036,6 +1065,21 @@ namespace PokemonGo_UWP.Utils
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
+            return value;
+        }
+
+        #endregion
+    }
+
+    public class PokemonSortingModesTranslationConverter : IValueConverter {
+        #region Implementation of IValueConverter
+
+        public object Convert(object value, Type targetType, object parameter, string language) {
+            var sortingMode = (PokemonSortingModes)value;
+            return Resources.CodeResources.GetString(sortingMode.ToString());
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language) {
             return value;
         }
 
@@ -1136,8 +1180,8 @@ namespace PokemonGo_UWP.Utils
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var playerStats = GameClient.PlayerStats;
-            //return playerStats?.Experience - playerStats?.PrevLevelXp ?? 0;            
+            var playerStats = (PlayerStats) value;
+            //return playerStats?.Experience - playerStats?.PrevLevelXp ?? 0;
             return playerStats == null ? 0 : _xpTable[playerStats.Level] - (playerStats.NextLevelXp - playerStats.Experience);
         }
 

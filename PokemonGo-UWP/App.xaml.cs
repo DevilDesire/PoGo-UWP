@@ -130,8 +130,7 @@ namespace PokemonGo_UWP
             if (e.Action != NotifyCollectionChangedAction.Add) return;
             if (SettingsService.Instance.IsVibrationEnabled)
                 _vibrationDevice?.Vibrate(TimeSpan.FromMilliseconds(500));
-            if (SettingsService.Instance.IsMusicEnabled)
-                await AudioUtils.PlaySound(@"pokemon_found_ding.wav");
+            await AudioUtils.PlaySound(@"pokemon_found_ding.wav");
         }
 
         #endregion
@@ -176,6 +175,7 @@ namespace PokemonGo_UWP
 
             // Enter into full screen mode
             ApplicationView.GetForCurrentView().TryEnterFullScreenMode();
+            ApplicationView.GetForCurrentView().FullScreenSystemOverlayMode = FullScreenSystemOverlayMode.Standard;            
 
             // Forces the display to stay on while we play
             //_displayRequest.RequestActive();
@@ -195,7 +195,7 @@ namespace PokemonGo_UWP
             // Respond to changes in inventory and Pokemon in the immediate viscinity.
                 GameClient.PokemonsInventory.CollectionChanged += PokemonsInventory_CollectionChanged;
             GameClient.CatchablePokemons.CollectionChanged += CatchablePokemons_CollectionChanged;
-
+            await AudioUtils.PlaySound(@"Gameplay.mp3");
             await Task.CompletedTask;
         }
 
