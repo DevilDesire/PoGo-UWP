@@ -24,7 +24,9 @@ using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
-using Universal_Authenticator_v2.Views;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using PokemonGo_UWP.Utils.Helpers;
 
 namespace PokemonGo_UWP
 {
@@ -88,7 +90,7 @@ namespace PokemonGo_UWP
         private static async void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             e.Handled = true;
-            await ExceptionHandler.HandleException(new Exception(e.Message));
+            await ExceptionHandler.HandleException(e.Exception);
             // We should be logging these exceptions too so they can be tracked down.
             if (!string.IsNullOrEmpty(ApplicationKeys.HockeyAppToken))
                 HockeyClient.Current.TrackException(e.Exception);
@@ -222,9 +224,7 @@ namespace PokemonGo_UWP
 
             // Respond to changes in inventory and Pokemon in the immediate viscinity.
             GameClient.PokemonsInventory.CollectionChanged += PokemonsInventory_CollectionChanged;
-            GameClient.CatchablePokemons.CollectionChanged += CatchablePokemons_CollectionChanged;
-
-            await AudioUtils.Init();            
+            GameClient.CatchablePokemons.CollectionChanged += CatchablePokemons_CollectionChanged;         
 
             await Task.CompletedTask;
         }        
