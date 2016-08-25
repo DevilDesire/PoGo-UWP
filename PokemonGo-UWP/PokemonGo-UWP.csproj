@@ -214,6 +214,10 @@
     <Content Include="Assets\Icons\Footprint_Mid.png" />
     <Content Include="Assets\Icons\Footprint_Near.png" />
     <Content Include="Assets\Icons\FrontPortraitRing.png" />
+    <Content Include="Assets\Icons\hint_gym_blue.png" />
+    <Content Include="Assets\Icons\hint_gym_neutral.png" />
+    <Content Include="Assets\Icons\hint_gym_red.png" />
+    <Content Include="Assets\Icons\hint_gym_yellow.png" />
     <Content Include="Assets\Icons\ic_candy_light.png" />
     <Content Include="Assets\Icons\ic_combat.png" />
     <Content Include="Assets\Icons\ic_date.png" />
@@ -230,7 +234,6 @@
     <Content Include="Assets\Icons\pokestop_near_inactive.png" />
     <Content Include="Assets\Icons\pokestop_near_inactive_lured.png" />
     <Content Include="Assets\Icons\pokestop_near_lured.png" />
-    <Content Include="Assets\Icons\RecenterMapIcon.png" />
     <Content Include="Assets\Icons\RecenterMapIconDark.png" />
     <Content Include="Assets\Icons\RecenterMapIconLight.png" />
     <Content Include="Assets\Icons\stardust_painted.png" />
@@ -481,6 +484,18 @@
     <Content Include="Assets\Fonts\Lato-Regular.ttf" />
     <Content Include="Assets\Fonts\Lato-Bold.ttf" />
     <None Include="project.json" />
+    <PRIResource Include="Strings\da\Resources.resw" />
+    <PRIResource Include="Strings\da\PokemonTypes.resw" />
+    <PRIResource Include="Strings\da\PokemonMoves.resw" />
+    <PRIResource Include="Strings\da\Pokemon.resw" />
+    <PRIResource Include="Strings\da\Pokedex.resw" />
+    <PRIResource Include="Strings\da\Items.resw" />
+    <PRIResource Include="Strings\da\CodeResources.resw" />
+    <PRIResource Include="Strings\da\Achievements.resw" />
+    <PRIResource Include="Strings\de-CH\Pokedex.resw" />
+    <PRIResource Include="Strings\nb-NO\Pokedex.resw" />
+    <PRIResource Include="Strings\hr-HR\Pokedex.resw" />
+    <PRIResource Include="Strings\hr\Pokedex.resw" />
     <PRIResource Include="Strings\de-CH\Resources.resw" />
     <PRIResource Include="Strings\de-CH\PokemonTypes.resw" />
     <PRIResource Include="Strings\de-CH\PokemonMoves.resw" />
@@ -731,6 +746,7 @@
     <Compile Include="Utils\Helpers\MapOrientationModes.cs" />
     <Compile Include="Utils\Helpers\LiveTileModes.cs" />
     <Compile Include="Utils\Helpers\LocalCacheHelper.cs" />
+    <Compile Include="Utils\Helpers\ProximityHelper.cs" />
     <Compile Include="Utils\Helpers\ProtobufJsonNetConverter.cs" />
     <Compile Include="Utils\Helpers\StorageHelper.cs" />
     <Compile Include="Utils\Signature\DeviceInfos.cs" />
@@ -753,6 +769,7 @@
     <Compile Include="Utils\Signature\Utilities.cs" />
     <Compile Include="ViewModels\CapturePokemonPageViewModel.cs" />
     <Compile Include="ViewModels\EggDetailPageViewModel.cs" />
+    <Compile Include="ViewModels\EnterGymPageViewModel.cs" />
     <Compile Include="ViewModels\GameMapPageViewModel.cs" />
     <Compile Include="ViewModels\AchievementDetailPageViewModel.cs" />
     <Compile Include="ViewModels\PlayerProfileViewModel.cs" />
@@ -768,6 +785,9 @@
     </Compile>
     <Compile Include="Views\AchievementDetailPage.xaml.cs">
       <DependentUpon>AchievementDetailPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EnterGymPage.xaml.cs">
+      <DependentUpon>EnterGymPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlayerProfilePage.xaml.cs">
       <DependentUpon>PlayerProfilePage.xaml</DependentUpon>
@@ -861,6 +881,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\EnterGymPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PlayerProfilePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -922,6 +946,7 @@
   </ItemGroup>
   <ItemGroup>
     <XliffResource Include="MultilingualResources\PokemonGo-UWP.cs.xlf" />
+    <XliffResource Include="MultilingualResources\PokemonGo-UWP.da.xlf" />
     <XliffResource Include="MultilingualResources\PokemonGo-UWP.de-CH.xlf" />
     <XliffResource Include="MultilingualResources\PokemonGo-UWP.de.xlf" />
     <XliffResource Include="MultilingualResources\PokemonGo-UWP.el.xlf" />
