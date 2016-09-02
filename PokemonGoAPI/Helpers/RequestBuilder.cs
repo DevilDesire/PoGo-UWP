@@ -11,7 +11,7 @@ namespace PokemonGo.RocketAPI.Helpers
 {
     public class RequestBuilder
     {
-        private readonly double _altitude;
+        private readonly double _accuracy;
         private readonly AuthTicket _authTicket;
         private readonly string _authToken;
         private readonly AuthType _authType;
@@ -21,7 +21,7 @@ namespace PokemonGo.RocketAPI.Helpers
         private readonly Random _random = new Random();
         private static byte[] _sessionHash = null;
 
-        public RequestBuilder(string authToken, AuthType authType, double latitude, double longitude, double altitude,
+        public RequestBuilder(string authToken, AuthType authType, double latitude, double longitude, double accuracy,
             IDeviceInfo deviceInfo,
             AuthTicket authTicket = null)
         {
@@ -29,7 +29,7 @@ namespace PokemonGo.RocketAPI.Helpers
             _authType = authType;
             _latitude = latitude;
             _longitude = longitude;
-            _altitude = altitude;
+            _accuracy = accuracy;
             _authTicket = authTicket;
             _deviceInfo = deviceInfo;
         }
@@ -54,10 +54,10 @@ namespace PokemonGo.RocketAPI.Helpers
             {
                 LocationHash1 =
                     Utils.GenerateLocation1(authSeed, requestEnvelope.Latitude, requestEnvelope.Longitude,
-                        requestEnvelope.Altitude),
+                        requestEnvelope.Accuracy),
                 LocationHash2 =
                     Utils.GenerateLocation2(requestEnvelope.Latitude, requestEnvelope.Longitude,
-                        requestEnvelope.Altitude),
+                        requestEnvelope.Accuracy),
                 SessionHash = ByteString.CopyFrom(_sessionHash),
                 Unknown25 = 7363665268261373700L,
                 Timestamp = (ulong)DateTime.UtcNow.ToUnixTime(),
@@ -134,13 +134,14 @@ namespace PokemonGo.RocketAPI.Helpers
                 Floor = loc.Floor,
                 Longitude = loc.Longitude,
                 Latitude = loc.Latitude,
-                //Altitude = loc.Altitude, //currently probably not filled
+                Altitude = loc.Altitude,
                 LocationType = loc.LocationType,
                 Provider = loc.Provider,
                 ProviderStatus = loc.ProviderStatus,
                 HorizontalAccuracy = loc.HorizontalAccuracy,
                 VerticalAccuracy = loc.VerticalAccuracy,
-                Unknown20 = loc.Unknown20,
+                Course = loc.Course,
+                Speed = loc.Speed,
                 TimestampSnapshot = loc.TimeSnapshot
 
             }));
@@ -176,10 +177,10 @@ namespace PokemonGo.RocketAPI.Helpers
                 //Unknown6 = , //6
                 Latitude = _latitude, //7
                 Longitude = _longitude, //8
-                Altitude = _altitude, //9
+                Accuracy = _accuracy, //9
                 AuthTicket = _authTicket, //11
-                Unknown12 = 989 //12
-            });
+                MsSinceLastLocationfix = _random.Next(500, 1000) //12
+        });
         }
 
         public RequestEnvelope GetInitialRequestEnvelope(params Request[] customRequests)
@@ -189,12 +190,12 @@ namespace PokemonGo.RocketAPI.Helpers
                 StatusCode = 2, //1
 
                 RequestId = 1469378659230941192, //3
-                Requests = {customRequests}, //4
+                Requests = { customRequests }, //4
 
                 //Unknown6 = , //6
                 Latitude = _latitude, //7
                 Longitude = _longitude, //8
-                Altitude = _altitude, //9
+                Accuracy = _accuracy, //9
                 AuthInfo = new AuthInfo
                 {
                     Provider = _authType == AuthType.Google ? "google" : "ptc",
@@ -204,7 +205,7 @@ namespace PokemonGo.RocketAPI.Helpers
                         Unknown2 = 14
                     }
                 }, //10
-                Unknown12 = 989 //12
+                MsSinceLastLocationfix = _random.Next(500, 1000) //12
             });
         }
 

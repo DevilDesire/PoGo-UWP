@@ -169,7 +169,7 @@ namespace PokemonGo_UWP.ViewModels
             =>
                 _returnToGameScreen ??
                 (_returnToGameScreen =
-                    new DelegateCommand(() => { NavigationService.Navigate(typeof(GameMapPage)); }, () => true));
+                    new DelegateCommand(() => { NavigationService.Navigate(typeof(GameMapPage), GameMapNavigationModes.PokemonUpdate); }, () => true));
 
         #endregion
 
@@ -208,7 +208,7 @@ namespace PokemonGo_UWP.ViewModels
                     return pokemonInventory.OrderByDescending(pokemon => pokemon.Stamina)
                         .ThenByDescending(pokemon => pokemon.Cp);
                 case PokemonSortingModes.Name:
-                    return pokemonInventory.OrderBy(pokemon => Resources.Pokemon.GetString(pokemon.PokemonId.ToString()))
+                    return pokemonInventory.OrderBy(pokemon =>pokemon.Name)
                             .ThenByDescending(pokemon => pokemon.Cp);
                 case PokemonSortingModes.Combat:
                     return pokemonInventory.OrderByDescending(pokemon => pokemon.Cp)

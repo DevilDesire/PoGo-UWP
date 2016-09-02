@@ -165,7 +165,7 @@
         </trans-unit>
         <trans-unit id="BugDescription" translate="yes" xml:space="preserve">
           <source>Caught {0} Bug Pokemon</source>
-          <target state="translated">{0} Pokémon de tipo Bicho atrapados</target>
+          <target state="final">{0} Pokémon de tipo Bicho atrapados</target>
         </trans-unit>
         <trans-unit id="DragonDescription" translate="yes" xml:space="preserve">
           <source>Caught {0} Dragon Pokemon</source>
@@ -281,8 +281,10 @@
           <target state="translated">Inicio de sesión fallido, por favor intente de nuevo.</target>
         </trans-unit>
         <trans-unit id="NoText" translate="yes" xml:space="preserve">
-          <source>No</source>
-          <target state="translated">No</target>
+          <source>NO</source>
+          <target state="needs-review-translation">No</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <note from="MultilingualBuild" annotates="source" priority="2">Capslock</note>
         </trans-unit>
         <trans-unit id="NoGpsPermissionsText" translate="yes" xml:space="preserve">
           <source>We need GPS permissions to run the game, please enable it and try again.</source>
@@ -329,8 +331,10 @@ Open page with installation files for manual install?</source>
           <target state="translated">El usuario o contraseña son incorrectos o el servidor no está disponible. Por favor intentelo de nuevo.</target>
         </trans-unit>
         <trans-unit id="YesText" translate="yes" xml:space="preserve">
-          <source>Yes</source>
-          <target state="translated">Sí</target>
+          <source>YES</source>
+          <target state="needs-review-translation">Sí</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <note from="MultilingualBuild" annotates="source" priority="2">Capslock</note>
         </trans-unit>
         <trans-unit id="InstinctTeamText" translate="yes" xml:space="preserve">
           <source>Instinct</source>
@@ -507,6 +511,32 @@ You also got {1} Stardust, {2} Candy and {3} XP.</target>
           <source>Do you really want to transfer {0} to the Professor?</source>
           <target state="new">Do you really want to transfer {0} to the Professor?</target>
         </trans-unit>
+        <trans-unit id="CancelText" translate="yes" xml:space="preserve">
+          <source>CANCEL</source>
+          <target state="new">CANCEL</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Capslock</note>
+        </trans-unit>
+        <trans-unit id="ItemDiscardWarningText" translate="yes" xml:space="preserve">
+          <source>Discard {0}?</source>
+          <target state="new">Discard {0}?</target>
+        </trans-unit>
+        <trans-unit id="SetNickName" translate="yes" xml:space="preserve">
+          <source>Set Nickname</source>
+          <target state="new">Set Nickname</target>
+        </trans-unit>
+        <trans-unit id="OkText" translate="yes" xml:space="preserve">
+          <source>O. K.</source>
+          <target state="new">O. K.</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Space between . and K</note>
+        </trans-unit>
+        <trans-unit id="PokemonEncounterErrorText" translate="yes" xml:space="preserve">
+          <source>There was an error loading the encounter with {0}, please try again later.</source>
+          <target state="new">There was an error loading the encounter with {0}, please try again later.</target>
+        </trans-unit>
+        <trans-unit id="PokemonEncounterNotInRangeText" translate="yes" xml:space="preserve">
+          <source>{0} is not in catch range anymore.</source>
+          <target state="new">{0} is not in catch range anymore.</target>
+        </trans-unit>
       </group>
     </body>
   </file>
@@ -589,9 +619,10 @@ You also got {1} Stardust, {2} Candy and {3} XP.</target>
           <target state="translated">objetos</target>
         </trans-unit>
         <trans-unit id="NumberTextBlock.Text" translate="yes" xml:space="preserve">
-          <source># </source>
-          <target state="translated"># </target>
-          <note from="MultilingualBuild" annotates="source" priority="2">Watch out: there is a space after the #</note>
+          <source>+ </source>
+          <target state="needs-review-translation"># </target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <note from="MultilingualBuild" annotates="source" priority="2">Watch out: there is a space after the +</note>
         </trans-unit>
         <trans-unit id="SlashSpaceCpTextBlock.Text" translate="yes" xml:space="preserve">
           <source>/ CP</source>
@@ -759,6 +790,15 @@ You also got {1} Stardust, {2} Candy and {3} XP.</target>
         <trans-unit id="FavoriteTextBlock.Text" translate="yes" xml:space="preserve">
           <source>FAVORITE</source>
           <target state="translated">FAVORITO</target>
+        </trans-unit>
+        <trans-unit id="AppraiseTextBlock.Text" translate="yes" xml:space="preserve">
+          <source>APPRAISE</source>
+          <target state="new">APPRAISE</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Capslock</note>
+        </trans-unit>
+        <trans-unit id="AwardedExperienceTextBlock.Text" translate="yes" xml:space="preserve">
+          <source>Experience</source>
+          <target state="new">Experience</target>
         </trans-unit>
       </group>
     </body>

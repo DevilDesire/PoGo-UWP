@@ -293,7 +293,12 @@ namespace PokemonGo_UWP.Utils
         /// <summary>
         ///     Stores upgrade costs (candy, stardust) per each level
         /// </summary>
-        public static Dictionary<int, object[]> PokemonUpgradeCosts { get; private set; } = new Dictionary<int, object[]>();
+        //public static Dictionary<int, object[]> PokemonUpgradeCosts { get; private set; } = new Dictionary<int, object[]>();
+
+        /// <summary>
+        /// Upgrade settings per each level
+        /// </summary>
+        public static PokemonUpgradeSettings PokemonUpgradeSettings { get; private set; }
 
         /// <summary>
         ///     Stores data about Pokemon moves
@@ -390,6 +395,7 @@ namespace PokemonGo_UWP.Utils
                 if (e is PokemonGo.RocketAPI.Exceptions.AccessTokenExpiredException)
                 {
                     Debug.WriteLine("AccessTokenExpired Exception caught");
+                    _client.AccessToken.Expire();
                     await _client.Login.DoLogin();
                 }
                 else
@@ -574,7 +580,7 @@ namespace PokemonGo_UWP.Utils
             // Updating player's position
             var position = Geoposition.Coordinate.Point.Position;
             if (_client != null)
-                await _client.Player.UpdatePlayerLocation(position.Latitude, position.Longitude, position.Altitude);
+                await _client.Player.UpdatePlayerLocation(position.Latitude, position.Longitude, Geoposition.Coordinate.Accuracy);
             GeopositionUpdated?.Invoke(null, Geoposition);
         }
 
@@ -705,7 +711,7 @@ namespace PokemonGo_UWP.Utils
         /// <summary>
         ///     List of items that can be used when trying to catch a Pokemon
         /// </summary>
-        private static readonly List<ItemId> CatchItemIds = new List<ItemId>
+        public static readonly List<ItemId> CatchItemIds = new List<ItemId>
         {
             ItemId.ItemPokeBall,
             ItemId.ItemGreatBall,
@@ -716,6 +722,24 @@ namespace PokemonGo_UWP.Utils
             ItemId.ItemRazzBerry,
             ItemId.ItemUltraBall,
             ItemId.ItemWeparBerry
+        };
+
+        /// <summary>
+        /// List of items, that can be used from the normal ItemsInventoryPage
+        /// </summary>
+        public static readonly List<ItemId> NormalUseItemIds = new List<ItemId>
+        {
+            ItemId.ItemPotion,
+            ItemId.ItemSuperPotion,
+            ItemId.ItemHyperPotion,
+            ItemId.ItemMaxPotion,
+            ItemId.ItemRevive,
+            ItemId.ItemMaxRevive,
+            ItemId.ItemLuckyEgg,
+            ItemId.ItemIncenseOrdinary,
+            ItemId.ItemIncenseSpicy,
+            ItemId.ItemIncenseCool,
+            ItemId.ItemIncenseFloral,
         };
 
         /// <summary>
@@ -786,18 +810,24 @@ namespace PokemonGo_UWP.Utils
                     .Select(item => item.PokemonSettings);
             }, DateTime.Now.AddMonths(1));
 
-            PokemonUpgradeCosts = await DataCache.GetAsync(nameof(PokemonUpgradeCosts), async () =>
+            //PokemonUpgradeCosts = await DataCache.GetAsync(nameof(PokemonUpgradeCosts), async () =>
+            //{
+            //    await Task.CompletedTask;
+            //    // Update Pokemon upgrade templates
+            //    var tmpPokemonUpgradeCosts = itemTemplates.First(item => item.PokemonUpgrades != null).PokemonUpgrades;
+            //    var tmpResult = new Dictionary<int, object[]>();
+            //    for (var i = 0; i < tmpPokemonUpgradeCosts.CandyCost.Count; i++)
+            //    {
+            //        tmpResult.Add(i,
+            //            new object[] { tmpPokemonUpgradeCosts.CandyCost[i], tmpPokemonUpgradeCosts.StardustCost[i] });
+            //    }
+            //    return tmpResult;
+            //}, DateTime.Now.AddMonths(1));
+
+            PokemonUpgradeSettings = await DataCache.GetAsync(nameof(PokemonUpgradeSettings), async () =>
             {
                 await Task.CompletedTask;
-                // Update Pokemon upgrade templates
-                var tmpPokemonUpgradeCosts = itemTemplates.First(item => item.PokemonUpgrades != null).PokemonUpgrades;
-                var tmpResult = new Dictionary<int, object[]>();
-                for (var i = 0; i < tmpPokemonUpgradeCosts.CandyCost.Count; i++)
-                {
-                    tmpResult.Add(i,
-                        new object[] { tmpPokemonUpgradeCosts.CandyCost[i], tmpPokemonUpgradeCosts.StardustCost[i] });
-                }
-                return tmpResult;
+                return itemTemplates.First(item => item.PokemonUpgrades != null).PokemonUpgrades;
             }, DateTime.Now.AddMonths(1));
 
 
@@ -980,6 +1010,11 @@ namespace PokemonGo_UWP.Utils
             return await _client.Inventory.SetFavoritePokemon(pokeId, isFavorite);
         }
 
+        public static async Task<NicknamePokemonResponse> SetPokemonNickName(ulong pokemonId, string nickName)
+        {
+            return await _client.Inventory.NicknamePokemon(pokemonId, nickName);
+        }
+
         #endregion
 
         #endregion
@@ -1031,6 +1066,21 @@ namespace PokemonGo_UWP.Utils
         /// FortRecallPokemon
         /// StartGymBattle
         /// AttackGym
+
+        #endregion
+
+        #region Items Handling
+
+        /// <summary>
+        ///     Recycles the given amount of the selected item
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
+        public static async Task<RecycleInventoryItemResponse> RecycleItem(ItemId item, int amount)
+        {
+            return await _client.Inventory.RecycleItem(item, amount);
+        }
 
         #endregion
 

@@ -1,4 +1,5 @@
 ﻿using PokemonGo_UWP.Utils;
+using PokemonGo_UWP.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -26,20 +27,10 @@ namespace PokemonGo_UWP.Views
         {
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
         }
-        private WidthConverter widthCalc = new WidthConverter();
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            var newWidth = (int)widthCalc.Convert(1, null, "0,28", null);
-            pokeindex.Width = newWidth;
-        }
 
-        private void GridViewPokedexSizeChanged(object sender, SizeChangedEventArgs e)
+        private void Pokeindex_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.PreviousSize != e.NewSize)
-            {
-                var panel_threads = (WrapGrid)pokeindex.ItemsPanelRoot;
-                panel_threads.ItemWidth = e.NewSize.Width / 3;
-            }
+            ((PokedexPageViewModel)DataContext).OpenPokedexEntry.Execute(e.ClickedItem);
         }
     }
 }

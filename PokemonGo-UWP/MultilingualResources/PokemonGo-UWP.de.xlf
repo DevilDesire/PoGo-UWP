@@ -280,8 +280,9 @@
           <target state="translated">Login fehlgeschlagen. Bitte versuche es erneut.</target>
         </trans-unit>
         <trans-unit id="NoText" translate="yes" xml:space="preserve">
-          <source>No</source>
-          <target state="translated">Nein</target>
+          <source>NO</source>
+          <target state="translated">NEIN</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Capslock</note>
         </trans-unit>
         <trans-unit id="NoGpsPermissionsText" translate="yes" xml:space="preserve">
           <source>We need GPS permissions to run the game, please enable it and try again.</source>
@@ -329,8 +330,9 @@ Seite zu den Dateien für manuelle Installation öffnen?</target>
           <target state="translated">Falscher Benutzername, falsches Passwort oder Server offline, bitte erneut versuchen.</target>
         </trans-unit>
         <trans-unit id="YesText" translate="yes" xml:space="preserve">
-          <source>Yes</source>
-          <target state="translated">Ja</target>
+          <source>YES</source>
+          <target state="translated">JA</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Capslock</note>
         </trans-unit>
         <trans-unit id="InstinctTeamText" translate="yes" xml:space="preserve">
           <source>Instinct</source>
@@ -508,6 +510,32 @@ Du hast auch {1} Sternenstaub, {2} Bonbon und {3} EP erhalten.</target>
           <source>Do you really want to transfer {0} to the Professor?</source>
           <target state="translated">Möchtest du {0} wirklich an den Professor schicken?</target>
         </trans-unit>
+        <trans-unit id="CancelText" translate="yes" xml:space="preserve">
+          <source>CANCEL</source>
+          <target state="translated">ABBRECHEN</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Capslock</note>
+        </trans-unit>
+        <trans-unit id="ItemDiscardWarningText" translate="yes" xml:space="preserve">
+          <source>Discard {0}?</source>
+          <target state="translated">{0} wegwerfen?</target>
+        </trans-unit>
+        <trans-unit id="SetNickName" translate="yes" xml:space="preserve">
+          <source>Set Nickname</source>
+          <target state="translated">Spitznamen eingeben</target>
+        </trans-unit>
+        <trans-unit id="OkText" translate="yes" xml:space="preserve">
+          <source>O. K.</source>
+          <target state="translated">O. K.</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Space between . and K</note>
+        </trans-unit>
+        <trans-unit id="PokemonEncounterErrorText" translate="yes" xml:space="preserve">
+          <source>There was an error loading the encounter with {0}, please try again later.</source>
+          <target state="new">There was an error loading the encounter with {0}, please try again later.</target>
+        </trans-unit>
+        <trans-unit id="PokemonEncounterNotInRangeText" translate="yes" xml:space="preserve">
+          <source>{0} is not in catch range anymore.</source>
+          <target state="new">{0} is not in catch range anymore.</target>
+        </trans-unit>
       </group>
     </body>
   </file>
@@ -602,9 +630,10 @@ Du hast auch {1} Sternenstaub, {2} Bonbon und {3} EP erhalten.</target>
           <target state="translated">items</target>
         </trans-unit>
         <trans-unit id="NumberTextBlock.Text" translate="yes" xml:space="preserve">
-          <source># </source>
-          <target state="translated"># </target>
-          <note from="MultilingualBuild" annotates="source" priority="2">Watch out: there is a space after the #</note>
+          <source>+ </source>
+          <target state="needs-review-translation"># </target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <note from="MultilingualBuild" annotates="source" priority="2">Watch out: there is a space after the +</note>
         </trans-unit>
         <trans-unit id="SlashSpaceCpTextBlock.Text" translate="yes" xml:space="preserve">
           <source>/ CP</source>
@@ -758,6 +787,15 @@ Du hast auch {1} Sternenstaub, {2} Bonbon und {3} EP erhalten.</target>
         <trans-unit id="SettingsLiveTileTextBlock.Text" translate="yes" xml:space="preserve">
           <source>Live Tile Mode</source>
           <target state="translated">Modus für Kachelaktualisierung</target>
+        </trans-unit>
+        <trans-unit id="AppraiseTextBlock.Text" translate="yes" xml:space="preserve">
+          <source>APPRAISE</source>
+          <target state="translated">BEWERTUNG</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Capslock</note>
+        </trans-unit>
+        <trans-unit id="AwardedExperienceTextBlock.Text" translate="yes" xml:space="preserve">
+          <source>Experience</source>
+          <target state="new">Experience</target>
         </trans-unit>
       </group>
     </body>

@@ -36,7 +36,7 @@ namespace PokemonGo_UWP.ViewModels
                     StaminaMax = 1000,
                     WeightKg = 12,
                     BattlesAttacked = 5
-                    
+
                 };
                 CurrentPokemon = new PokemonDataWrapper(pokeData);
                 StardustAmount = 18000;
@@ -65,9 +65,10 @@ namespace PokemonGo_UWP.ViewModels
             if (suspensionState.Any())
             {
                 // Recovering the state
-                PlayerProfile = new PlayerData();                
+                PlayerProfile = new PlayerData();
                 CurrentPokemon = JsonConvert.DeserializeObject<PokemonDataWrapper>((string)suspensionState[nameof(CurrentPokemon)]);
                 PlayerProfile.MergeFrom(ByteString.FromBase64((string)suspensionState[nameof(PlayerProfile)]).CreateCodedInput());
+                RaisePropertyChanged(() => PlayerProfile);                
             }
             else
             {
@@ -290,11 +291,13 @@ namespace PokemonGo_UWP.ViewModels
             PlayerProfile = GameClient.PlayerProfile;
             IsFavorite = Convert.ToBoolean(CurrentPokemon.Favorite);
             StardustAmount = PlayerProfile.Currencies.FirstOrDefault(item => item.Name.Equals("STARDUST")).Amount;
-            var upgradeCosts =
-                GameClient.PokemonUpgradeCosts[
-                    Convert.ToInt32(Math.Round(PokemonInfo.GetLevel(CurrentPokemon.WrappedData)) - 1)];
-            CandiesToPowerUp = Convert.ToInt32(upgradeCosts[0]);
-            StardustToPowerUp = Convert.ToInt32(upgradeCosts[1]);
+            //var upgradeCosts =
+            //    GameClient.PokemonUpgradeSettings.CandyCost[
+            //        Convert.ToInt32(Math.Floor(PokemonInfo.GetLevel(CurrentPokemon.WrappedData)) - 1)];
+            CandiesToPowerUp = Convert.ToInt32(GameClient.PokemonUpgradeSettings.CandyCost[
+                    Convert.ToInt32(Math.Floor(PokemonInfo.GetLevel(CurrentPokemon.WrappedData)) - 1)]);
+            StardustToPowerUp = Convert.ToInt32(GameClient.PokemonUpgradeSettings.StardustCost[
+                    Convert.ToInt32(Math.Floor(PokemonInfo.GetLevel(CurrentPokemon.WrappedData)) - 1)]);
             PokemonExtraData = GameClient.GetExtraDataForPokemon(CurrentPokemon.PokemonId);
             CurrentCandy = GameClient.CandyInventory.FirstOrDefault(item => item.FamilyId == PokemonExtraData.FamilyId);
             RaisePropertyChanged(() => PokemonExtraData);
@@ -320,6 +323,20 @@ namespace PokemonGo_UWP.ViewModels
 
         #endregion
 
+        #region Appraise
+
+        private DelegateCommand _appraisePokemonCommand;
+
+        public DelegateCommand AppraisePokemonCommand => _appraisePokemonCommand ?? (
+          _appraisePokemonCommand = new DelegateCommand(() =>
+          {
+              // TODO: Implement appraise
+              var dialog = new MessageDialog("Sorry, check back later ;)", "Not yet implemented");
+              dialog.ShowAsync();
+          }, () => true));
+
+        #endregion
+
         #region Transfer
 
         private DelegateCommand _transferPokemonCommand;
@@ -328,47 +345,61 @@ namespace PokemonGo_UWP.ViewModels
           _transferPokemonCommand = new DelegateCommand(() =>
           {
               // Ask for confirmation before moving the Pokemon
-              var dialog = new PoGoMessageDialog(string.Format(Resources.CodeResources.GetString("TransferPokemonWarningTitle"), Resources.Pokemon.GetString(CurrentPokemon.PokemonId.ToString())), 
-                  Resources.CodeResources.GetString("TransferPokemonWarningText"));
-              dialog.AcceptText = Resources.CodeResources.GetString("YesText");
-              dialog.CancelText = Resources.CodeResources.GetString("NoText");
-              dialog.CoverBackground = true;
-              dialog.AnimationType = PoGoMessageDialogAnimation.Bottom;
+              var name = Resources.Pokemon.GetString(CurrentPokemon.PokemonId.ToString());
+              var dialog =
+                  new PoGoMessageDialog(
+                      string.Format(Resources.CodeResources.GetString("TransferPokemonWarningTitle"), name),
+                      Resources.CodeResources.GetString("TransferPokemonWarningText"))
+                  {
+                      AcceptText = Resources.CodeResources.GetString("YesText"),
+                      CancelText = Resources.CodeResources.GetString("NoText"),
+                      CoverBackground = true,
+                      AnimationType = PoGoMessageDialogAnimation.Bottom
+                  };
+
               dialog.AcceptInvoked += async (sender, e) =>
               {
                   // User confirmed transfer
-                  var pokemonTransferResponse = await GameClient.TransferPokemon(CurrentPokemon.Id);
-                  switch (pokemonTransferResponse.Result)
+                  try
                   {
-                      case ReleasePokemonResponse.Types.Result.Unset:
-                          break;
-                      case ReleasePokemonResponse.Types.Result.Success:
-                          // This isn't a MessageDialog in the original. Need to implement the additional UI
-                          await
-                              new MessageDialog(
-                                  string.Format(Resources.CodeResources.GetString("TransferPokemonSuccessText"),
-                                      Resources.Pokemon.GetString(CurrentCandy.FamilyId.ToString().Replace("Family", "")))).ShowAsyncQueue();
-                          await GameClient.UpdateInventory();
-                          await GameClient.UpdatePlayerStats();
-                          // HACK - if we're coming fro the inventory we may go back, otherwise we go to map page
-                          if (NavigationService.Frame.BackStack.Last().SourcePageType == typeof(PokemonInventoryPage))
-                              NavigationService.GoBack();
-                          else
-                              NavigationService.Navigate(typeof(GameMapPage), GameMapNavigationModes.PokemonUpdate);
-                          break;
+                      Busy.SetBusy(true);
+                      var pokemonTransferResponse = await GameClient.TransferPokemon(CurrentPokemon.Id);
 
-                      case ReleasePokemonResponse.Types.Result.PokemonDeployed:
-                          break;
-                      case ReleasePokemonResponse.Types.Result.Failed:
-                          break;
-                      case ReleasePokemonResponse.Types.Result.ErrorPokemonIsEgg:
-                          break;
-                      default:
-                          throw new ArgumentOutOfRangeException();
+                      switch (pokemonTransferResponse.Result)
+                      {
+                          case ReleasePokemonResponse.Types.Result.Unset:
+                              break;
+                          case ReleasePokemonResponse.Types.Result.Success:
+                              // This isn't a MessageDialog in the original. Need to implement the additional UI
+                              await GameClient.UpdateInventory();
+                              await GameClient.UpdatePlayerStats();
+                              // HACK - if we're coming fro the inventory we may go back, otherwise we go to map page
+                              if (NavigationService.Frame.BackStack.Last().SourcePageType ==
+                                  typeof(PokemonInventoryPage))
+                                  NavigationService.GoBack();
+                              else
+                                  NavigationService.Navigate(typeof(GameMapPage), GameMapNavigationModes.PokemonUpdate);
+                              break;
+
+                          case ReleasePokemonResponse.Types.Result.PokemonDeployed:
+                              break;
+                          case ReleasePokemonResponse.Types.Result.Failed:
+                              break;
+                          case ReleasePokemonResponse.Types.Result.ErrorPokemonIsEgg:
+                              break;
+                          default:
+                              throw new ArgumentOutOfRangeException();
+                      }
                   }
+                  finally
+                  {
+                      Busy.SetBusy(false);
+                  }
+
               };
 
               dialog.Show();
+
           }, () => true));
 
         private void Dialog_CancelInvoked(object sender, RoutedEventArgs e)
@@ -385,25 +416,33 @@ namespace PokemonGo_UWP.ViewModels
         public DelegateCommand FavoritePokemonCommand => _favoritePokemonCommand ?? (
           _favoritePokemonCommand = new DelegateCommand(async () =>
           {
-              bool isFavorite = Convert.ToBoolean(CurrentPokemon.Favorite);
-              var pokemonFavoriteResponse = await GameClient.SetFavoritePokemon(CurrentPokemon.Id, !isFavorite);
-              switch (pokemonFavoriteResponse.Result)
+              try
               {
-                  case SetFavoritePokemonResponse.Types.Result.Unset:
-                      break;
-                  case SetFavoritePokemonResponse.Types.Result.Success:
-                      // Inverse favorite state
-                      CurrentPokemon.WrappedData.Favorite = Convert.ToInt32(!isFavorite);
+                  Busy.SetBusy(true);
+                  var isFavorite = Convert.ToBoolean(CurrentPokemon.Favorite);
+                  var pokemonFavoriteResponse = await GameClient.SetFavoritePokemon(CurrentPokemon.Id, !isFavorite);
+                  switch (pokemonFavoriteResponse.Result)
+                  {
+                      case SetFavoritePokemonResponse.Types.Result.Unset:
+                          break;
+                      case SetFavoritePokemonResponse.Types.Result.Success:
+                          // Inverse favorite state
+                          CurrentPokemon.WrappedData.Favorite = Convert.ToInt32(!isFavorite);
 
-                      IsFavorite = !isFavorite;
-                      break;
-                  
-                  case SetFavoritePokemonResponse.Types.Result.ErrorPokemonNotFound:
-                      break;
-                  case SetFavoritePokemonResponse.Types.Result.ErrorPokemonIsEgg:
-                      break;
-                  default:
-                      throw new ArgumentOutOfRangeException();
+                          IsFavorite = !isFavorite;
+                          break;
+
+                      case SetFavoritePokemonResponse.Types.Result.ErrorPokemonNotFound:
+                          break;
+                      case SetFavoritePokemonResponse.Types.Result.ErrorPokemonIsEgg:
+                          break;
+                      default:
+                          throw new ArgumentOutOfRangeException();
+                  }
+              }
+              finally
+              {
+                  Busy.SetBusy(false);
               }
           }, () => true));
 
@@ -414,9 +453,63 @@ namespace PokemonGo_UWP.ViewModels
         private DelegateCommand _renamePokemonCommand;
 
         public DelegateCommand RenamePokemonCommand => _renamePokemonCommand ?? (
-          _renamePokemonCommand = new DelegateCommand(async () =>
+          _renamePokemonCommand = new DelegateCommand(() =>
           {
-              
+              var textbox = new TextboxMessageDialog(CurrentPokemon.Name, 12);
+              var dialog = new PoGoMessageDialog("", Resources.CodeResources.GetString("SetNickName"))
+              {
+                  DialogContent = textbox,
+                  AcceptText = Resources.CodeResources.GetString("OkText"),
+                  CancelText = Resources.CodeResources.GetString("CancelText"),
+                  CoverBackground = true,
+                  BackgroundTapInvokesCancel = true,
+                  AnimationType = PoGoMessageDialogAnimation.Bottom
+              };
+
+              dialog.AppearCompleted += (sender, e) =>
+              {
+                  textbox.SelectAllOnTextBoxFocus = true;
+                  textbox.FocusTextbox(FocusState.Programmatic);
+              };
+              dialog.AcceptInvoked += async (sender, e) =>
+              {
+
+                  try
+                  {
+                      Busy.SetBusy(true);
+                      // Send rename request
+                      var res = await GameClient.SetPokemonNickName((ulong) CurrentPokemon.Id, textbox.Text);
+                      switch (res.Result)
+                      {
+                          case NicknamePokemonResponse.Types.Result.Unset:
+                              break;
+                          case NicknamePokemonResponse.Types.Result.Success:
+                              // Reload updated data
+                              var currentPokemonData = CurrentPokemon.WrappedData;
+                              currentPokemonData.Nickname = textbox.Text;
+                              CurrentPokemon = new PokemonDataWrapper(currentPokemonData);
+                              await GameClient.UpdateInventory();
+                              await GameClient.UpdateProfile();
+                              UpdateCurrentData();
+                              break;
+                          case NicknamePokemonResponse.Types.Result.ErrorPokemonNotFound:
+                              break;
+                          case NicknamePokemonResponse.Types.Result.ErrorInvalidNickname:
+                              break;
+                          case NicknamePokemonResponse.Types.Result.ErrorPokemonIsEgg:
+                              break;
+                          default:
+                              throw new ArgumentOutOfRangeException();
+                      }
+                  }
+                  finally
+                  {
+                      Busy.SetBusy(false);
+                  }
+              };
+
+              dialog.Show();
+
           }, () => true));
 
         #endregion
